@@ -65,7 +65,8 @@ The services can be implemented using any programming language.
 3. Run `docker-compose up --build` on main directory to build and start the services
 4. Verify the Setup Access the services using curl or your web browser:
 
-    - Gateway Service: http://localhost:5000/
+    - Gateway Service Status: http://localhost:5000/status
+    - Gateway service data( round robin): http://localhost:5000/data
     - Storage Service 1: http://localhost:5001/data
     - Storage Service 2: http://localhost:5002/data
     - Storage Service 3: http://localhost:5003/data
@@ -82,6 +83,15 @@ The services can be implemented using any programming language.
 ## Testing Endpoints
 
 You can use the following `curl` commands to test the storage services:
+
+### Gatway service accessing Storage Service
+
+- curl http://localhost:5000/data
+- Expected response: 
+  {
+    "id": 1,
+    "message": "Hello from Storage Service!"
+  }
 
 ### Storage Service 1
 
