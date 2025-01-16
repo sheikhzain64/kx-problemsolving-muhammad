@@ -21,3 +21,116 @@ The services can be implemented using any programming language.
 * Provide a solution for the described problem and give us the instructions necessary to execute it
 * We would like to have your solution in form of a Pull Request into the main repository
 * _What should the Gateway do if no Storage Services are running?_
+
+## SOLUTION
+
+
+## Architecture Overview
+
+### Gateway Service
+- Acts as an API Gateway/Load Balancer
+- Handles incoming requests and routes them to appropriate storage services
+- Implements simple round-robin load balancing
+- Built with Python using Flask framework
+
+### Storage Service
+- Provides data storage and retrieval functionality
+- Can be scaled horizontally with multiple instances
+- Also built with Flask framework
+
+## Technical Stack
+- Python
+- Flask (Web Framework)
+- Docker & Docker Compose
+- RESTful APIs
+
+## Service Communication
+- Services communicate via HTTP/REST
+- Gateway implements load balancing for multiple storage service instances
+- Health checks are implemented to ensure service availability
+
+## Project Structure
+```
+.
+├── docker-compose.yaml    # Docker compose configuration
+├── gateway_svc/          # Gateway service
+│   └── gateway.py        # Gateway implementation with load balancing
+└── storage_svc/          # Storage service
+    └── storage.py        # Storage implementation with data endpoint
+```
+
+## Setup and Deployment
+1. Ensure Docker and Docker Compose are installed on your system
+2. Clone this repository
+3. Run `docker-compose up --build` on main directory to build and start the services
+4. Verify the Setup Access the services using curl or your web browser:
+
+    - Gateway Service: http://localhost:5000/
+    - Storage Service 1: http://localhost:5001/data
+    - Storage Service 2: http://localhost:5002/data
+    - Storage Service 3: http://localhost:5003/data
+
+## API Endpoints
+
+### Gateway Service
+- `GET /status` - Health check endpoint that returns the status of all storage services
+- `GET /data` - Retrieves data from storage services using round-robin load balancing
+
+### Storage Service
+- `GET /data` - Returns stored data with a simple JSON response
+
+## Testing Endpoints
+
+You can use the following `curl` commands to test the storage services:
+
+### Storage Service 1
+
+- curl http://localhost:5001/data . 
+- Expected response: 
+  {
+    "id": 1,
+    "message": "Hello from Storage Service!"
+  }
+### Storage Service 2
+
+- curl http://localhost:5002/data . 
+- Expected response: 
+  {
+    "id": 1,
+    "message": "Hello from Storage Service!"
+  }
+### Storage Service 3
+
+- curl http://localhost:5003/data . 
+- Expected response: 
+  {
+    "id": 1,
+    "message": "Hello from Storage Service!"
+  }
+
+### Gateway Service
+- curl http://localhost:5000/status
+- {"http://storage_svc_1:5001":"Available","http://storage_svc_2:5001":"Available","http://storage_svc_3:5001":"Available"}
+
+## Load Balancing
+The gateway service implements a round-robin load balancing strategy:
+- Maintains a list of available storage services
+- Rotates through services for each request
+- Skips unavailable services automatically
+- Returns 503 error if no services are available
+
+## Error Handling
+- Gateway implements timeouts (2 seconds) for storage service requests
+- Provides appropriate error responses when services are unavailable
+- Includes error logging for failed service communications
+
+## Scaling
+The architecture supports horizontal scaling of the storage service by adding more instances through Docker Compose. Currently configured with:
+- 1 Gateway service (port 5000)
+- Multiple Storage services (starting at port 5001)
+
+## Network Configuration
+Services communicate over a Docker network named 'gateway-network' which:
+- Isolates the services from external networks
+- Enables service discovery using Docker DNS
+- Allows internal communication between services

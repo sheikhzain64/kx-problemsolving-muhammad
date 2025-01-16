@@ -1,0 +1,40 @@
+services:
+  gateway-service:
+    build:
+      context: ./gateway_svc
+      dockerfile: Dockerfile 
+    ports:
+      - "5000:5000"
+    networks:
+      - gateway-network
+
+  storage_svc_1:
+    build:
+      context: ./storage_svc
+      dockerfile: Dockerfile 
+    ports:
+      - "5001:5001" 
+    networks:
+      - gateway-network
+
+  storage_svc_2:
+    build:
+      context: ./storage_svc
+      dockerfile: Dockerfile 
+    ports:
+      - "5002:5001"
+    networks:
+      - gateway-network
+
+  storage_svc_3:
+    build:
+      context: ./storage_svc
+      dockerfile: Dockerfile
+    ports:
+      - "5003:5001"
+    networks:
+      - gateway-network
+
+networks:
+  gateway-network:
+    driver: bridge
